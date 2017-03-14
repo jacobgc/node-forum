@@ -5,21 +5,29 @@ var fs = require('fs');
 var bcrypt = require('bcrypt-nodejs');
 var sharp = require('sharp');
 var r = require('rethinkdb');
+var csrf = require('csurf');
+
+var csrfProtection = csrf();
 
 var AWS = require('aws-sdk'); // Amazon <3
 // Create an S3 client
 var s3 = new AWS.S3({ signatureVersion: 'v4' });
 
-var connection = null;
-r.connect({ host: 'localhost', port: 28015 }, function(err, conn) {
-    if (err) throw err;
-    connection = conn;
-})
-
 
 // /* GET home page. */
 router.get('/', function(req, res, next) {
     res.render('index', { title: 'Shreddt -- The home of awesome!' });
+});
+
+// /* Redirect /login. */
+router.get('/login', function(req, res, next) {
+    res.redirect('/user/signin');
+});
+
+var connection = null;
+r.connect({ host: 'localhost', port: 28015 }, function(err, conn) {
+    if (err) throw err;
+    connection = conn;
 });
 
 // THUMBNAIL STUFF (For use later)
