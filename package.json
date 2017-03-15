@@ -8,17 +8,26 @@
   "dependencies": {
     "aws-sdk": "^2.25.0",
     "bcrypt-nodejs": "0.0.3",
-    "body-parser": "~1.15.1",
-    "cookie-parser": "~1.4.3",
+    "body-parser": "^1.15.2",
+    "connect-flash": "^0.1.1",
+    "cookie-parser": "^1.4.3",
+    "csurf": "^1.9.0",
     "debug": "~2.2.0",
     "ejs": "~2.4.1",
-    "express": "^4.13.4",
+    "express": "^4.15.2",
+    "express-session": "^1.15.1",
     "morgan": "~1.7.0",
     "node-uuid": "^1.4.7",
+<<<<<<< HEAD
     "request": "^2.81.0",
+=======
+    "passport": "^0.3.2",
+    "passport-local": "^1.0.0",
+>>>>>>> fd62bef44a82b60c659bd2c1779f278e0ad9e1de
     "rethinkdb": "^2.3.3",
     "serve-favicon": "~2.3.0",
     "sharp": "^0.17.2",
-    "uuid": "^3.0.1"
+    "uuid": "^3.0.1",
+    "xtend": "^4.0.1"
   }
 }
