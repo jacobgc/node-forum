@@ -34,7 +34,6 @@ passport.use('local-signup', new localStrategy({
     passwordField: 'password',
     passReqToCallback: true // send intial request to the callback
 }, function(req, username, password, done) { // callback
-    console.log('fuck me');
     r.db('shreddit').table('users').filter(r.row('username').eq(username))
         .run(connection, function(err, cursor) {
             if (err) throw err;
@@ -74,59 +73,63 @@ passport.use('local-signup', new localStrategy({
         });
 }));
 
-passport.use('local-signin', new localStrategy({
-    usernamefield: 'username',
-    passwordField: 'password',
-    passReqToCallback: true,
+var meme = new user("")
 
-}, function(req, username, password, done) {
+passport.use('local
+        signin ', new localStrategy({
+        usernamefield: 'username',
+        passwordField: 'password',
+        passReqToCallback: true,
 
-    var newUser = new user();
-    r.db('shreddit').table('users').filter(r.row('username').eq(username))
-        .run(connection, function(err, cursor) {
-            if (err) throw err
-            cursor.toArray(function(err, result) {
+    },
+    function(req, username, password, done) {
+
+        var newUser = new user();
+        r.db('shreddit').table('users').filter(r.row('username').eq(username))
+            .run(connection, function(err, cursor) {
                 if (err) throw err
-                if (typeof result[0] !== "undefined") {
-                    var returnedUser = result[0];
-                    newUser.username = returnedUser.username;
-                    newUser.email = returnedUser.email;
-                    newUser.password = returnedUser.password;
-                    newUser.firstName = returnedUser.firstName;
-                    newUser.lastName = returnedUser.lastName;
-                    var passCheck = newUser.comparePassword(password);
-                    if (passCheck) {
-                        newUser.password = null;
-                        done(null, newUser);
+                cursor.toArray(function(err, result) {
+                    if (err) throw err
+                    if (typeof result[0] !== "undefined") {
+                        var returnedUser = result[0];
+                        newUser.username = returnedUser.username;
+                        newUser.email = returnedUser.email;
+                        newUser.password = returnedUser.password;
+                        newUser.firstName = returnedUser.firstName;
+                        newUser.lastName = returnedUser.lastName;
+                        var passCheck = newUser.comparePassword(password);
+                        if (passCheck) {
+                            newUser.password = null;
+                            done(null, newUser);
+                        } else {
+                            return done(null, false, { message: 'Invalid password' });
+                        }
                     } else {
-                        return done(null, false, { message: 'Invalid password' });
-                    }
-                } else {
-                    r.db('shreddit').table('users').filter(r.row('email').eq(username))
-                        .run(connection, function(err, cursor) {
-                            if (err) throw err
-                            cursor.toArray(function(err, result) {
+                        r.db('shreddit').table('users').filter(r.row('email').eq(username))
+                            .run(connection, function(err, cursor) {
                                 if (err) throw err
-                                if (typeof result[0] !== "undefined") {
-                                    var returnedUser = result[0];
-                                    newUser.username = returnedUser.username;
-                                    newUser.email = returnedUser.email;
-                                    newUser.password = returnedUser.password;
-                                    newUser.firstName = returnedUser.firstName;
-                                    newUser.lastName = returnedUser.lastName;
-                                    var passCheck = newUser.comparePassword(password);
-                                    if (passCheck) {
-                                        newUser.password = null;
-                                        return done(null, newUser);
+                                cursor.toArray(function(err, result) {
+                                    if (err) throw err
+                                    if (typeof result[0] !== "undefined") {
+                                        var returnedUser = result[0];
+                                        newUser.username = returnedUser.username;
+                                        newUser.email = returnedUser.email;
+                                        newUser.password = returnedUser.password;
+                                        newUser.firstName = returnedUser.firstName;
+                                        newUser.lastName = returnedUser.lastName;
+                                        var passCheck = newUser.comparePassword(password);
+                                        if (passCheck) {
+                                            newUser.password = null;
+                                            return done(null, newUser);
+                                        } else {
+                                            return done(null, false, { message: 'Invalid password' });
+                                        }
                                     } else {
-                                        return done(null, false, { message: 'Invalid password' });
+                                        return done(null, false, { message: 'A user with the given username/email could not be found' });
                                     }
-                                } else {
-                                    return done(null, false, { message: 'A user with the given username/email could not be found' });
-                                }
-                            })
-                        });
-                }
-            });
-        })
-}));
+                                })
+                            });
+                    }
+                });
+            })
+    }));

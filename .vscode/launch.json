@@ -8,14 +8,8 @@
             "type": "node",
             "request": "launch",
             "name": "Launch Program",
+            "runtimeExecutable": "/home/jacob/.nvm/versions/node/v7.7.3/bin/node",
             "program": "${workspaceRoot}/bin/www"
-        },
-        {
-            "type": "node",
-            "request": "attach",
-            "name": "Attach to Process",
-            "address": "localhost",
-            "port": 5858
         }
     ]
 }

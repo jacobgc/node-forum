@@ -6,20 +6,20 @@ var connection = null;
 r.connect({ host: 'localhost', port: 28015 }, function(err, conn) {
     if (err) throw err;
     connection = conn;
-})
+});
 
 
 class newUser { // WARNING: MAY CONTAIN RAW PASSWORD
-    constructor(username, email, password, firstName, lastname) {
+    constructor(username, email, password, firstName, lastName) {
         this.username = username,
             this.email = email,
             this.password = password,
             this.firstName = firstName,
-            this.lastname = lastname
+            this.lastName = lastName
     }
 
     createPassword(password) {
-        return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null)
+        return bcrypt.hashSync(password, bcrypt.genSaltSync(10), null);
     }
 
     comparePassword(password) {
@@ -33,10 +33,10 @@ class newUser { // WARNING: MAY CONTAIN RAW PASSWORD
             email: this.email,
             password: this.password,
             firstName: this.firstName,
-            lastname: this.lastName
-        }).run(connection, function(err, result) {
+            lastName: this.lastName,
+        }).run(connection, function(err) {
             if (err) return err;
-            console.log('User inserted into database.')
+            console.log('User inserted into database.');
         });
     }
 }
