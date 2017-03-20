@@ -8,43 +8,15 @@
 </head>
 
 <body>
-    <nav class="cyan darken-4" role="navigation">
-        <div class="nav-wrapper container"><a name="logo-container" href="#" class="brand-logo">Logo</a>
-            <ul class="right hide-on-med-and-down">
-                <li><a href="#">Register/Login</a></li>
-            </ul>
+    <%- include ../templates/nav.ejs %>
 
-            <ul name="nav-mobile" class="snamee-nav">
-                <li><a href="#">Register/Login <i class="fa fa-sign-in" aria-hnameden="true"></i></a>
-                </li>
-
-            </ul>
-            <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
-        </div>
-    </nav>
-    <div class="container">
+        <br>
         <div class="row">
-            <form method="POST" id="signupForm" action="/user/signup" class="col s12">
-                <div class="row">
-                    <div class="input-field col s6">
-                        <input required name="firstName" type="text" class="valnameate">
-                        <label for="firstName">First Name</label>
-                    </div>
-                    <div class="input-field col s6">
-                        <input required name="lastName" type="text" class="valnameate">
-                        <label for="lastName">Last Name</label>
-                    </div>
-                </div>
+            <form method="POST" id="signupForm" action="/user/signup" class="col s12 m6 offset-m3">
                 <div class="row">
                     <div class="input-field col s12">
                         <input required name="username" type="text" class="valnameate">
                         <label for="username">Username</label>
-                    </div>
-                </div>
-                <div class="row">
-                    <div class="input-field col s12">
-                        <input required name="password" type="password" class="valnameate">
-                        <label for="password">Password</label>
                     </div>
                 </div>
                 <div class="row">
@@ -55,26 +27,33 @@
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
+                        <input required name="password" type="password" class="valnameate">
+                        <label for="password">Password</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
                         <button class="g-recaptcha btn waves-effect waves-light" data-sitekey="6LeaGxkUAAAAAHvFZALsEfZaN7xo39N03Kqs9FEu" data-callback="onSubmit">
 Submit
                     <i class="material-icons right">send</i>
 </button>
+                        <br><br><a href="/user/signin">Have an account? Click here</a>
+
                     </div>
                 </div>
                 <input type="hidden" name="_csrf" value="<%=csrf%>">
             </form>
         </div>
-    </div>
-    </div>
-    <%- include ../templates/footer.ejs %>
-        <script>
-            Materialize.toast('<%=message%>', 4000);
-        </script>
-        <script>
-            function onSubmit(token) {
-                document.getElementById("signupForm").submit();
-            }
-        </script>
+        </div>
+        <%- include ../templates/footer.ejs %>
+            <script>
+                Materialize.toast('<%=message%>', 4000);
+            </script>
+            <script>
+                function onSubmit(token) {
+                    document.getElementById("signupForm").submit();
+                }
+            </script>
 </body>
 
 </html>

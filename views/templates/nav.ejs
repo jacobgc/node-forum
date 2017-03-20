@@ -1,0 +1,51 @@
+<nav class="cyan darken-4" role="navigation">
+    <div class="nav-wrapper container">
+        <a id="logo-container" href="/" class="brand-logo">Shreddit</a>
+        <ul class="right hide-on-med-and-down">
+            <% if(lI == false) { %>
+                <li><a href="/login">Register/Login</a></li>
+                <% }else{ %>
+                    <li class="valign-wrapper">
+                        <img src="<%=user.avatarURL%>" style="width: 35px;" alt="User profile image">
+                        <a class="dropdown-button" href='#' data-belowOrigin=true data-constrainWidth=false data-activates='userDropDown'>
+                            <span class="right"><%=user.username%></span>
+                        </a>
+                    </li>
+                    <% } %>
+        </ul>
+        <form class="right hide-on-med-and-down">
+            <div class="input-field">
+                <input id="search" type="search" required>
+                <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                <i class="material-icons">close</i>
+            </div>
+        </form>
+
+        <ul id="nav-mobile" class="side-nav">
+            <form class="right hide-on-med-and-down">
+                <div class="input-field">
+                    <input id="search" type="search" required>
+                    <label class="label-icon" for="search"><i class="material-icons">search</i></label>
+                    <i class="material-icons">close</i>
+                </div>
+            </form>
+            <% if(lI == false) { %>
+                <li><a href="/login">Register/Login</a></li>
+                <% }else{ %>
+                    <li><a href="/logout">Logout</a></li>
+                    <% } %>
+        </ul>
+        <a href="#" data-activates="nav-mobile" class="button-collapse"><i class="material-icons">menu</i></a>
+    </div>
+</nav>
+<% if(lI){%>
+    <ul id='userDropDown' class='dropdown-content'>
+        <li><a href="/user/profile">Profile</a></li>
+        <li><a href="/user/profile/edit">Edit Profile</a></li>
+        <li class="divider"></li>
+        <li><a href="/u/<%=user.username%>/posts">View posts</a></li>
+        <li><a href="/u/<%=user.username%>/comments">View comments</a></li>
+        <li class="divider"></li>
+        <li><a href="/logout">Sign out</a></li>
+    </ul>
+    <%}%>
