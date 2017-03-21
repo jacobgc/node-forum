@@ -1,8 +1,5 @@
-var express = require('express');
-var router = express.Router();
 var r = require("../db");
 var bcrypt = require('bcrypt-nodejs');
-var connection;
 var md5 = require('md5');
 
 class newUser {
@@ -23,21 +20,16 @@ class newUser {
         return passCheck;
     }
 
-    censorData(user) {
-        user.password = null;
-        return user;
-    }
-
     findByUsername(username) {
         console.log(username);
         return r.table('users').getAll(username, { index: 'username' }).run()
             .then((result) => {
                 console.log(result);
                 if (typeof result[0] == "undefined") {
-                    return (true);
+                    return true;
                 }
                 result[0].password = null;
-                return (result[0]);
+                return result[0];
             });
     }
 
@@ -49,20 +41,21 @@ class newUser {
                     return true;
                 }
                 result[0].password = null;
-                return false, result[0];
+                return result[0];
             });
     }
 
     save() {
-        r.db('shreddit').table('users').insert({
-            username: this.username,
-            email: this.email,
-            password: this.password,
-            avatarURL: "https://www.gravatar.com/avatar/" + md5(this.email) + "?d=retro&f=n"
-        }).run(connection, function(err) {
-            if (err) return err;
-            console.log('User inserted into database.');
-        });
+        return r.table('users').insert({
+                username: this.username,
+                email: this.email,
+                password: this.password,
+                avatarURL: "https://www.gravatar.com/avatar/" + md5(this.email) + "?d=retro&f=n"
+            }).run()
+            .then(() => {
+                console.log("User:" + this.username + ", inserted into the database");
+                return;
+            });
     }
 }
 
