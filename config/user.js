@@ -50,7 +50,7 @@ class newUser {
                 username: this.username,
                 email: this.email,
                 password: this.password,
-                avatarURL: "https://www.gravatar.com/avatar/" + md5(this.email) + "?d=retro&f=n"
+                avatarURL: "https://www.gravatar.com/avatar/" + md5(this.email) + "?d=retro"
             }).run()
             .then(() => {
                 console.log("User:" + this.username + ", inserted into the database");

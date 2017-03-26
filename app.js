@@ -56,6 +56,7 @@ var routes = require('./routes/');
 var user = require('./routes/user/');
 var u = require('./routes/u/');
 var sr = require('./routes/r/');
+
 app.use('/', routes);
 app.use('/user', user);
 app.use('/u', u);

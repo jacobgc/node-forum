@@ -36,7 +36,7 @@ router.post('/signup', passport.authenticate('local-signup', {
     successRedirect: '/',
     failureRedirect: '/user/signup',
     failureFlash: true
-}));
+}));1
 
 // POST Login
 router.post('/signin', passport.authenticate('local-signin', {
