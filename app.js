@@ -22,7 +22,7 @@ app.use(cookieParser());
 var rdbStore = new RDBStore({
     connectOptions: {
         servers: [
-            { host: '127.0.0.1', port: 28015 }
+            { host: 'localhost', port: 28015 }
         ],
         db: 'shreddit',
         discovery: false,

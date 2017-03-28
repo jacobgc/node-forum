@@ -16,16 +16,25 @@
                 <blockquote>
                     <h3>Edit User</h3>
                 </blockquote>
+                <blockquote>
+                    <p>Avatars can be changed at <a href="https://gravatar.com">Gravatar</a></p>
+                </blockquote>
                 <div class="row">
                     <div class="input-field col s12">
-                        <input required autofocus name="username" type="text" class="validate">
-                        <label for="username">Username/Email</label>
+                        <input required name="username" type="text" value="<%=user.username%>" class="validate">
+                        <label for="username">Username</label>
                     </div>
                 </div>
                 <div class="row">
                     <div class="input-field col s12">
-                        <input required name="password" type="password" class="validate">
-                        <label for="password">Password</label>
+                        <input required name="email" type="email" value="<%=user.email%>" class="validate">
+                        <label for="username">Email</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <textarea name="bio" type="text" class="validate materialize-textarea" rows="1" cols="4"><%=user.bio%></textarea>
+                        <label for="bio">Bio</label>
                     </div>
                 </div>
                 <input type="hidden" name="_csrf" value="<%=csrf%>">
@@ -34,9 +43,7 @@
                         <button class="g-recaptcha btn waves-effect waves-light" data-sitekey="6LeaGxkUAAAAAHvFZALsEfZaN7xo39N03Kqs9FEu" data-callback="onSubmit">
 Submit
                     <i class="material-icons right">send</i>
-</button>
-                        <br><br><a href="/user/signup">Don't have an account? Click here</a>
-                    </div>
+</button> </div>
                 </div>
             </form>
         </div>
@@ -50,14 +57,4 @@ Submit
             </script>
 </body>
 
-</html> Materialize.toast('
-<%=message%>', 4000);
-    </script>
-    <script>
-        function onSubmit(token) {
-            document.getElementById("signupForm").submit();
-        }
-    </script>
-    </body>
-
-    </html>
+</html>

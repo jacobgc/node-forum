@@ -2,20 +2,22 @@ var express = require('express');
 var router = express.Router();
 var user = require('../../config/user');
 
-router.get('/', function(req, res) {
-    res.send('welcome to /u');
+router.get('/', function(req, res, next) {
+    next("User Not Found");
 });
 
 router.get('/*', function(req, res, next) {
     var username = req.url.substring(1);
+    username = username.toLowerCase();
     var usr = new user();
 
     usr.findByUsername(username)
         .then((user) => {
-            console.log(user);
-            if (user === true) {
+            //console.log(user);
+            if (user === false) {
                 user = {
-                    username: "Error user not found",
+                    title: "User Not Found -- Shreddit",
+                    suser: "Error user not found",
                 };
             }
             res.render('u/', {
@@ -28,5 +30,13 @@ router.get('/*', function(req, res, next) {
         })
         .catch(next);
 });
+
+function isAuthed(req, res, next) {
+    if (req.isAuthenticated()) {
+        return next();
+    }
+    req.flash('error', 'You need to be logged in to do that');
+    res.redirect('/login');
+}
 
 module.exports = router;

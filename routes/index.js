@@ -25,7 +25,7 @@ router.get('/', function(req, res, next) {
 });
 
 // Log out the user
-router.get('/logout', function(req, res, next) {
+router.get('/logout', function(req, res) {
     req.logout();
     res.redirect('/');
 });

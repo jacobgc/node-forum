@@ -6,19 +6,16 @@ var r = require("../db");
 
 
 passport.serializeUser(function(user, done) {
-    done(null, user.username);
     console.log('serializing user');
+    done(null, user.username);
 });
 
 passport.deserializeUser(function(username, done) {
-    return r.table('users').getAll(username, { index: 'username' }).run()
-        .then((result) => {
-            if (typeof result[0] !== "undefined") {
-                return done(null, result[0]);
-            }
-            console.log("Failed to deserializeUser; Could not find them in the database");
-            return done(false);
-        });
+    var usr = new user(); // Create a user instance 
+    return usr.findByUsername(username).then((result) => { // Search for the user 
+        if (!result) return done(false); // Could not find user (cookie/db change)
+        return done(null, result); // Return the user
+    });
 });
 
 
@@ -69,26 +66,23 @@ passport.use('local-signin', new localStrategy({
     function(req, username, password, done) {
         username = username.toLowerCase();
         var newUser = new user();
-        return r.table('users').getAll(username, { index: 'username' }).run()
-            .then((result) => {
-                if (typeof result[0] !== "undefined") {
-                    newUser = new user(result[0].username, result[0].email, result[0].password);
-                }
+        var tmpUser = new user();
+        return tmpUser.findByUsername(username).then((result) => {
+                if (!result) return;
+                newUser.populate(result);
             })
             .then(() => {
-                r.table('users').getAll(username, { index: 'email' }).run()
-                    .then((result) => {
-                        if (typeof result[0] !== "undefined") {
-                            newUser = new user(result[0].username, result[0].email, result[0].password);
-                        }
-                    });
-            }).then(() => {
+                tmpUser.findByEmail(username).then((result) => {
+                    if (!result) return;
+                    newUser.populate(result);
+                });
+            })
+            .then(() => {
                 if (typeof newUser.email == "undefined") {
                     req.flash('error', "No account found with the username/email provided");
                     return done(null, false);
                 } else {
                     if (newUser.comparePassword(password)) {
-                        console.log(newUser.username + "; Successfully logged in");
                         return done(null, newUser);
                     } else {
                         req.flash('error', "Invalid password");

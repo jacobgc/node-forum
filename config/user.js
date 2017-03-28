@@ -3,10 +3,31 @@ var bcrypt = require('bcrypt-nodejs');
 var md5 = require('md5');
 
 class newUser {
-    constructor(username, email, password) {
+    constructor(username, email, password, bio) {
         this.username = username,
             this.email = email,
-            this.password = password;
+            this.password = password,
+            this.bio = bio;
+    }
+    populate(input) {
+        this.username = input.username;
+        this.email = input.username;
+        this.password = input.password;
+        this.bio = input.bio;
+    }
+
+    updateAll(username) {
+        console.log(this.email, this.username, this.bio);
+        return r.table('users').getAll(username, { index: 'username' }).update({
+                email: this.email,
+                username: this.username,
+                bio: this.bio
+            }).run()
+            .then(() => {
+                return;
+            }).catch((err) => {
+                console.log(err);
+            });
     }
 
     // Returns a hashed string (for the password)
@@ -21,17 +42,15 @@ class newUser {
     }
 
     findByUsername(username) {
-        console.log(username);
         return r.table('users').getAll(username, { index: 'username' }).run()
             .then((result) => {
-                console.log(result);
                 if (typeof result[0] == "undefined") {
-                    return true;
+                    return false;
                 }
-                result[0].password = null;
                 return result[0];
             });
     }
+
 
     // Finds and returns a user by their username
     findByEmail(email) {
@@ -40,7 +59,6 @@ class newUser {
                 if (typeof result[0] == "undefined") {
                     return true;
                 }
-                result[0].password = null;
                 return result[0];
             });
     }

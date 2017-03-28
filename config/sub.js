@@ -1,10 +1,16 @@
 var r = require("../db");
 
+var blacklistedSubs = [
+    "delete",
+    "create",
+];
+
 class sub {
     constructor(name, description, owner, needsMod) {
         this.name = name,
             this.description = description,
-            this.owner = owner
+            this.owner = owner,
+            this.needsMod = needsMod
     }
 
     update(a, b) { // DOES NOT WORK, NEEDS FIXING
@@ -17,7 +23,7 @@ class sub {
             });
     }
 
-    static get(name) {
+    get(name) {
         return r.table("subs").getAll(name, { index: 'name' }).run()
             .then((result) => {
                 if (typeof result[0] == "undefined") {
