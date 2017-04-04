@@ -44,7 +44,6 @@ router.get('/isauthed', isAuthed, function(req, res) {
 
 // POST Edit
 router.post('/edit', isAuthed, function(req, res, next) {
-    console.log(req.body.username, req.body.email, req.body.bio);
     var usr = new user();
     return usr.findByUsername(req.user.username).then((user) => {
         if (!user) next("User not found to update");

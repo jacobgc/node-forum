@@ -46,6 +46,22 @@
         <li><a href="/u/<%=user.username%>/posts">View posts</a></li>
         <li><a href="/u/<%=user.username%>/comments">View comments</a></li>
         <li class="divider"></li>
-        <li><a href="/logout">Sign out</a></li>
+        <li>
+            <a href="/r/create">Create Subshreddit</a>
+        </li>
+        <% for (var i = 0; i < user.subs; i++) { %>
+            <li>
+                <a href="/r/<%=user.subs[i].name%>">
+                    <%=user.subs[i].name%>
+                </a>
+            </li>
+            <% } %>
+                <li class="divider"></li>
+                <li><a href="/logout">Sign out</a></li>
+    </ul>
+    <ul id='subDropDown' class='dropdown-content'>
+        <li><a href="/u/<%=user.username%>">Create SubShreddit</a></li>
+        <li class="divider"></li>
+
     </ul>
     <%}%>

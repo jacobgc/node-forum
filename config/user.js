@@ -14,6 +14,17 @@ class newUser {
         this.email = input.username;
         this.password = input.password;
         this.bio = input.bio;
+        this.subs = input.subs;
+        this.threads = input.threads;
+        this.posts = input.posts;
+    }
+
+    update(a, b) {
+        var update = {};
+        update[a] = b;
+        return r.table('users').getAll(this.username, { index: 'id' }).update(update).run().then(() => {
+            return;
+        });
     }
 
     updateAll(username) {
@@ -68,10 +79,12 @@ class newUser {
                 username: this.username,
                 email: this.email,
                 password: this.password,
-                avatarURL: "https://www.gravatar.com/avatar/" + md5(this.email) + "?d=retro"
+                avatarURL: "https://www.gravatar.com/avatar/" + md5(this.email) + "?d=retro",
+                subs: [],
+                threads: [],
+                posts: []
             }).run()
             .then(() => {
-                console.log("User:" + this.username + ", inserted into the database");
                 return;
             });
     }

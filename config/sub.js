@@ -1,4 +1,5 @@
 var r = require("../db");
+var validator = require('validator');
 
 var blacklistedSubs = [
     "delete",
@@ -6,31 +7,48 @@ var blacklistedSubs = [
 ];
 
 class sub {
-    constructor(name, description, owner, needsMod) {
+    constructor(name, description, owner) {
         this.name = name,
             this.description = description,
-            this.owner = owner,
-            this.needsMod = needsMod
+            this.owner = owner
     }
 
-    update(a, b) { // DOES NOT WORK, NEEDS FIXING
+    errorCheck(name) {
+        return new Promise(function(resolve, reject) {
+            if (validator.contains(name, " ") || validator.isAlpha(name, ['en-GB'])) {
+                console.log(false);
+                resolve(false);
+            } else {
+                console.log(true);
+                resolve(true);
+            }
+        });
+    }
+
+    update(a, b) {
         var update = {};
         update[a] = b;
-        return r.table('subs').update(update).run()
-            .then(() => {
-                console.log("updated " + a + " changed value to " + b);
-                return;
+        return r.table('subs').getAll(this.id, { index: 'id' }).update(update).run().then(() => {
+            return;
+        });
+    }
+
+    getall() {
+        return r.table('subs').run()
+            .then((result) => {
+                return result;
             });
     }
 
     get(name) {
+        name = name.toLowerCase();
         return r.table("subs").getAll(name, { index: 'name' }).run()
             .then((result) => {
                 if (typeof result[0] == "undefined") {
                     return false;
                 } else {
                     var a = result[0];
-                    var nsub = new sub(a.name, a.desciption, a.owner, a.needsMod);
+                    var nsub = new sub(a.name, a.desciption, a.owner);
                     return nsub;
                 }
             });
@@ -50,7 +68,6 @@ class sub {
                             name: this.name,
                             owner: this.owner,
                             description: this.description,
-                            needsMod: true
                         }).run()
                         .then(() => {
                             return true;
