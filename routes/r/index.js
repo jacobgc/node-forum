@@ -56,7 +56,9 @@ router.post('/create', isAuthed, function(req, res) {
 router.get('/all', function(req, res) {
     var a = new sub();
     a.getall().then((result) => {
-        res.json({ result: result });
+        res.json({
+            result: result
+        });
     });
 });
 
