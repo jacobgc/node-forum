@@ -22,14 +22,17 @@ class newUser {
     update(a, b) {
         var update = {};
         update[a] = b;
-        return r.table('users').getAll(this.username, { index: 'id' }).update(update).run().then(() => {
+        return r.table('users').getAll(this.username, {
+            index: 'id'
+        }).update(update).run().then(() => {
             return;
         });
     }
 
     updateAll(username) {
-        console.log(this.email, this.username, this.bio);
-        return r.table('users').getAll(username, { index: 'username' }).update({
+        return r.table('users').getAll(username, {
+                index: 'username'
+            }).update({
                 email: this.email,
                 username: this.username,
                 bio: this.bio
@@ -37,7 +40,7 @@ class newUser {
             .then(() => {
                 return;
             }).catch((err) => {
-                console.log(err);
+                console.log('Problem updating user');
             });
     }
 
@@ -53,7 +56,9 @@ class newUser {
     }
 
     findByUsername(username) {
-        return r.table('users').getAll(username, { index: 'username' }).run()
+        return r.table('users').getAll(username, {
+                index: 'username'
+            }).run()
             .then((result) => {
                 if (typeof result[0] == "undefined") {
                     return false;
@@ -65,7 +70,9 @@ class newUser {
 
     // Finds and returns a user by their username
     findByEmail(email) {
-        return r.table('users').getAll(email, { index: 'email' }).run()
+        return r.table('users').getAll(email, {
+                index: 'email'
+            }).run()
             .then((result) => {
                 if (typeof result[0] == "undefined") {
                     return true;
