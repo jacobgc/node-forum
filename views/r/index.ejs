@@ -28,18 +28,21 @@
                         </li>
                         <li class="collection-item avatar">
                             <img src="https://placehold.it/100x100" alt="" class="circle">
-                            <span class="title">Title</span>
-                            <p>First Line <br> Second Line
-                            </p>
-                            <a href="#!" class="secondary-content"><i class="material-icons">grade</i></a>
+                            <span class="title">Hitler dies :(</span>
+                            <p>Post body .....awd.awd.wad.aw.da.d.awd.w</p>
                         </li>
                 </div>
             </div>
             <div class="col s12 m3">
-                3
+                <div id="ldesc">
+                </div>
             </div>
         </div>
         <%- include ../templates/footer.ejs %>
 </body>
-
+<script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js"></script>
+<script>
+    document.getElementById('ldesc').innerHTML =
+      marked('<%=sub.ldescription%>');
+</script>
 </html>
