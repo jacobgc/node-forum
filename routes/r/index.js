@@ -2,7 +2,6 @@ var express = require('express');
 var router = express.Router();
 var csrf = require('csurf');
 var csrfProtection = csrf();
-var marked = require('marked');
 router.use(csrfProtection);
 var sub = require('../../config/sub');
 var user = require('../../config/user');
