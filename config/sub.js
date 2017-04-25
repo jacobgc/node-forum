@@ -7,9 +7,10 @@ var blacklistedSubs = [
 ];
 
 class sub {
-    constructor(name, description, owner) {
+    constructor(name, description,ldescription, owner) {
         this.name = name,
             this.description = description,
+            this.ldescription = ldescription,
             this.owner = owner
     }
 
@@ -48,7 +49,7 @@ class sub {
                     return false;
                 } else {
                     var a = result[0];
-                    var nsub = new sub(a.name, a.desciption, a.owner);
+                    var nsub = new sub(a.name, a.desciption, a.ldescription, a.owner);
                     return nsub;
                 }
             });
@@ -68,6 +69,7 @@ class sub {
                             name: this.name,
                             owner: this.owner,
                             description: this.description,
+                            ldescription: this.ldescription
                         }).run()
                         .then(() => {
                             return true;

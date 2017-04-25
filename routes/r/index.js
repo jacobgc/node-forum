@@ -6,7 +6,7 @@ router.use(csrfProtection);
 var sub = require('../../config/sub');
 var user = require('../../config/user');
 
-router.get('/create', isAuthed, function(req, res) {
+router.get('/create', isAuthed, function (req, res) {
     res.render('r/create', {
         title: "/r/new",
         csrf: req.csrfToken(),
@@ -16,11 +16,12 @@ router.get('/create', isAuthed, function(req, res) {
     });
 });
 
-router.post('/create', isAuthed, function(req, res) {
+router.post('/create', isAuthed, function (req, res) {
     var nsub = new sub();
     var usr = new user();
     nsub.name = req.body.name;
     nsub.description = req.body.description;
+    nsub.ldescription = req.body.ldescription;
     nsub.owner = req.user.username;
     if (typeof req.body.mature === "undefined") {
         nsub.mature = false;
@@ -47,13 +48,13 @@ router.post('/create', isAuthed, function(req, res) {
             });
         } else {
             req.flash('error', "Sub's name validation failed, does it contain a white space or contain special characters?");
-            req.redirect('/r/create');
+            res.redirect('/r/create');
         }
     });
 
 });
 
-router.get('/all', function(req, res) {
+router.get('/all', function (req, res) {
     var a = new sub();
     a.getall().then((result) => {
         res.json({
@@ -62,23 +63,23 @@ router.get('/all', function(req, res) {
     });
 });
 
-router.get('/*/*', function(req, res) {
-    res.send(req.url);
-});
 
-router.get('/*', function(req, res) {
+router.get('/*', function (req, res) {
     var subName = req.url.substring(1); //t Get the sub name from url
     subName = subName.replace(" ", ""); // Remove white spaces
     var nsub = new sub('a', 'a', 'a'); // create an "empty" sub
     nsub = nsub.get(subName).then((nsub) => { // Populate it
-
-        res.render('r/', {
-            title: "/r/" + nsub.name + " -- Shreddit",
-            lI: req.isAuthenticated(),
-            message: req.flash('error'),
-            user: req.user || null, // The logged in user
-            sub: nsub // The searched user 
-        });
+        if (typeof nsub.name === "undefined") {
+            res.redirect('/404');
+        } else {
+            res.render('r/', {
+                title: "/r/" + nsub.name + " -- Shreddit",
+                lI: req.isAuthenticated(),
+                message: req.flash('error'),
+                user: req.user || null, // The logged in user
+                sub: nsub // The searched user 
+            });
+        }
     });
 });
 
