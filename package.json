@@ -3,7 +3,7 @@
   "version": "0.0.0",
   "private": true,
   "scripts": {
-    "start": "NODE_ENV=development nodemon ./bin/www"
+    "start": "NODE_ENV=development; node ./bin/www"
   },
   "dependencies": {
     "aws-sdk": "^2.25.0",
@@ -17,10 +17,10 @@
     "express": "^4.15.2",
     "express-session": "^1.15.1",
     "express-session-rethinkdb": "^0.4.1",
-    "marked": "^0.3.6",
     "md5": "^2.2.1",
     "morgan": "~1.7.0",
     "node-uuid": "^1.4.7",
+    "open-graph-scraper": "^2.5.1",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
     "request": "^2.81.0",

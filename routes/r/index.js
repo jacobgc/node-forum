@@ -2,9 +2,11 @@ var express = require('express');
 var router = express.Router();
 var csrf = require('csurf');
 var csrfProtection = csrf();
+var ogs = require('open-graph-scraper');
 router.use(csrfProtection);
 var sub = require('../../config/sub');
 var user = require('../../config/user');
+var post = require('../../config/post');
 
 router.get('/create', isAuthed, function (req, res) {
     res.render('r/create', {
@@ -54,6 +56,61 @@ router.post('/create', isAuthed, function (req, res) {
 
 });
 
+router.get('/*/p/create', isAuthed, function (req, res) {
+    var subName = req.url.match(/\/[a-z]*\//g); // REGEX to transform /SUBNAME/p/create
+    subName = subName[0].replace(/[\/]/g, ''); //                  to SUBNAME
+    res.render('r/p/create', {
+        title: subName + " -> Create a new post -- Shreddit",
+        csrf: req.csrfToken(),
+        lI: req.isAuthenticated(),
+        message: req.flash('error'),
+        user: req.user || null,
+        subName: subName,
+    });
+});
+
+router.post('/*/p/create', function (req, res, next) {
+    var subName = req.url.match(/\/[a-z]*\//g); // REGEX to transform /SUBNAME/p/create
+    subName = subName[0].replace(/[\/]/g, ''); //                  to SUBNAME
+    var newPost = new post();
+    newPost.title = req.body.title;
+    newPost.body = req.body.body;
+    newPost.owner = req.user.username;
+    newPost.contentType = req.body.contentType;
+    newPost.content = req.body.content;
+    newPost.id = newPost.genID();
+    switch (req.body.contentType) {
+        case "image":
+            newPost.isCTypeURL().then((result) => {
+                if (result !== false) {
+                    newPost.content = result; // Set the result to the formatted URL
+                    if (newPost.content.includes("imgur.com") && !newPost.content.includes("i.imgur.com")) {
+                        console.log(newPost.content);
+                        ogs({
+                            url: newPost.content
+                        }, function (err, result) {
+                            if (err) return next("Error getting open graph data from provided URL");
+                            console.log( result.data.ogImage.url); // T
+                        })
+                    }
+                } else {
+                    next(new Error("No valid URL provided, please try again"));
+                }
+            }).catch((reason) => {
+                next(new Error(reason));
+            });
+        case "video":
+            break;
+        case "url":
+            break;
+        case "text":
+            break;
+        default:
+            next(new Error("Content type not detected. We got: " + newPost.contentType));
+            break;
+    }
+});
+
 router.get('/all', function (req, res) {
     var a = new sub();
     a.getall().then((result) => {
@@ -77,7 +134,7 @@ router.get('/*', function (req, res) {
                 lI: req.isAuthenticated(),
                 message: req.flash('error'),
                 user: req.user || null, // The logged in user
-                sub: nsub // The searched user 
+                sub: nsub // The subreddit 
             });
         }
     });

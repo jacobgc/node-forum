@@ -1,0 +1,83 @@
+<!DOCTYPE html>
+<html lang="en">
+
+<head>
+    <%- include ../../templates/header.ejs %>
+        <script src='https://www.google.com/recaptcha/api.js'></script>
+        <!--Insert custom head content below-->
+</head>
+
+<body>
+    <%- include ../../templates/nav.ejs %>
+
+        <br>
+        <div class="row">
+            <form method="POST" id="postForm" action="/r/<%=subName%>/p/create" class="col s12 m6 offset-m3">
+                <blockquote>
+                    <h3>Post awesome content to /r/<%=subName%>!</h3>
+                </blockquote>
+                <div class="row">
+                    <div class="inpmut-field col s12">
+                        <input required name="title" type="text" class="valnameate">
+                        <label for="title">Title</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <textarea name="body" type="text" class="validate materialize-textarea" rows="1" cols="4"></textarea>
+                        <label for="bio">Body (Markdown supported)</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <blockquote>
+                    <h5>Content Type</h5>
+                </blockquote>
+                    <div class="input-field col s12">
+                        <p>
+                            <input value="image" name="contentType" type="radio" id="image" />
+                            <label for="image">Image (Imgur or direct link supported)</label>
+                        </p>
+                        <p>
+                            <input value="video" name="contentType" type="radio" id="video"/>
+                            <label for="video">Video (Youtube or direct link supported)</label>
+                        </p>
+                        <p>
+                            <input value="url" name="contentType" type="radio" id="url" />
+                            <label for="url">Generic URL (screenshot taken for preview)</label>
+                        </p>
+                        <p>
+                            <input value="text" name="contentType" type="radio" id="text"/>
+                            <label for="text">Text (PasteBin / Gist URL OR text)</label>
+                        </p>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <textarea name="content" type="text" class="validate materialize-textarea" rows="1" cols="4"></textarea>
+                        <label for="bio">Content URL / Text</label>
+                    </div>
+                </div>
+                <div class="row">
+                    <div class="input-field col s12">
+                        <button class="g-recaptcha btn waves-effect waves-light" data-sitekey="6LeaGxkUAAAAAHvFZALsEfZaN7xo39N03Kqs9FEu" data-callback="onSubmit">
+Submit
+                    <i class="material-icons right">send</i>
+</button>
+                    </div>
+                </div>
+                <input type="hidden" name="_csrf" value="<%=csrf%>">
+            </form>
+        </div>
+        </div>
+        <%- include ../../templates/footer.ejs %>
+            <script>
+                Materialize.toast('<%=message%>', 4000);
+            </script>
+            <script>
+                function onSubmit(token) {
+                    document.getElementById("postForm").submit();
+                }
+            </script>
+</body>
+
+</html>
