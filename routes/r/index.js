@@ -72,69 +72,126 @@ router.get('/*/p/create', isAuthed, function (req, res) {
 router.post('/*/p/create', function (req, res, next) {
     var subName = req.url.match(/\/[a-z]*\//g); // REGEX to transform /SUBNAME/p/create
     subName = subName[0].replace(/[\/]/g, ''); //                  to SUBNAME
-    var newPost = new post();
-    newPost.title = req.body.title;
-    newPost.body = req.body.body;
-    newPost.owner = req.user.username;
-    newPost.contentType = req.body.contentType;
-    newPost.content = req.body.content;
-    newPost.id = newPost.genID();
-    switch (req.body.contentType) {
-        case "image":
-            newPost.isCTypeURL().then((result) => {
-                if (result !== false) {
-                    newPost.content = result; // Set the result to the formatted URL
-                    if (newPost.content.includes("imgur.com") && !newPost.content.includes("i.imgur.com")) {
-                        console.log(newPost.content);
-                        ogs({
-                            url: newPost.content
-                        }, function (err, result) {
-                            if (err) return next("Error getting open graph data from provided URL");
-                            console.log( result.data.ogImage.url); // T
-                        })
-                    }
-                } else {
-                    next(new Error("No valid URL provided, please try again"));
-                }
-            }).catch((reason) => {
-                next(new Error(reason));
-            });
-        case "video":
-            break;
-        case "url":
-            break;
-        case "text":
-            break;
-        default:
-            next(new Error("Content type not detected. We got: " + newPost.contentType));
-            break;
-    }
-});
+    var sampleSub = new sub();
+    sampleSub.get(subName).then((sub) => {
+        var newPost = new post();
+        newPost.subID = sub.id
+        newPost.title = req.body.title;
+        newPost.body = req.body.body;
+        newPost.owner = req.user.username;
+        newPost.contentType = req.body.contentType;
+        newPost.content = req.body.content;
+        newPost.genID();
+        switch (req.body.contentType) {
+            case "image":
+                newPost.isCTypeURL().then((result) => {
+                    if (result !== false) {
+                        console.log("Found contentType ot be a URL");
+                        newPost.content = result; // Set the result to the formatted URL
+                        if (newPost.content.includes("imgur.com") && !newPost.content.includes("i.imgur.com")) {
+                            ogs({
+                                url: newPost.content
+                            }, function (err, result) {
+                                if (err) return next("Error getting open graph data from provided URL");
+                                var test = result.data.ogImage.url;
+                                test = test.replace(/\?fb/g, ''); // Fix 403 error
+                                newPost.thumbnailEtag = test; // URL temporarly held in thumbnailEtag until the etag is found
+                                newPost.content = test;
+                                newPost.genThumbnail().then(() => {
+                                    newPost.genURI().then((uri) => {
+                                        newPost.uri = uri.toLowerCase();
+                                        newPost.create().then(() => {
+                                            res.redirect('/r/' + subName + '1/p/' + newPost.uri);
+                                        })
+                                    })
+                                }).catch((reason) => {
+                                    next(new Error(reason));
+                                });
 
-router.get('/all', function (req, res) {
-    var a = new sub();
-    a.getall().then((result) => {
-        res.json({
-            result: result
-        });
+                            })
+                        } else { // Try to get image from generic URL
+                            console.log("Imgur not found, attempting generic URL");
+                            newPost.genThumbnail().then(() => {
+                                newPost.genURI().then((uri) => {
+                                    newPost.uri = uri.toLowerCase();
+                                    newPost.create().then(() => {
+                                        res.redirect('/r/' + subName + '/p/' + newPost.uri);
+                                    });
+                                })
+                            });
+                        }
+                    } else {
+                        next(new Error("No valid URL provided, please try again"));
+                    }
+                }).catch((reason) => {
+                    next(new Error(reason));
+                });
+            case "video":
+                break;
+            case "url":
+                break;
+            case "text":
+                break;
+            default:
+                next(new Error("Content type not detected. We got: " + newPost.contentType));
+                break;
+        }
     });
 });
 
+router.get('/*/p/*', function (req, res, next) { // GET POST FROM SUB
+    var subName = req.url.match(/\/[a-z]{2,}\//g); // REGEX to transform /SUBNAME/p/create
+    if (subName === null) next("Error, sub not found");
+    subName = subName[0].replace(/[\/]/g, ''); //                  to SUBNAME
+    subName = subName.toLowerCase(); // For the love of regex handle everything in lowercase ;_;
+    var matches = getMatches(req.url, /\/[a-z]{2,}\/p\/([a-z,1-9-]*)/g, 1); // Custom function to loop through capture groups
+    console.log(matches[0]); // Returns the first capture group
+    var targetSub = new sub(); // create an "empty" sub
+    targetSub = targetSub.get(subName).then((targetSub) => {
+        var targetPost = new post();
+        console.log("Target Sub: ", targetSub);
+        targetPost.getByURI(matches[0], targetSub.id).then((foundPost) => {
+            if (foundPost === false) next(new Error("Post not found"));
+            console.log("Found Post:", foundPost);
+            res.header("Authorization", "Client-ID c51c057e78c1a4e");
+            res.render('r/p/', {
+                title: foundPost.title + " -- /r/" + targetSub.name + " -- Shreddit",
+                lI: req.isAuthenticated(),
+                message: req.flash('error'),
+                user: req.user || null, // The logged in user
+                sub: targetSub, // The subreddit 
+                post: foundPost, // The Post that was found
+                imgur: foundPost.content.includes("imgur.com")
+            });
+        }).catch((reason) => {
+            next(reason);
+        });
+    }).catch((reason) => {
+        next(reason);
+    });
 
-router.get('/*', function (req, res) {
+});
+
+router.get('/*', function (req, res) { // GET SUB
     var subName = req.url.substring(1); //t Get the sub name from url
     subName = subName.replace(" ", ""); // Remove white spaces
     var nsub = new sub('a', 'a', 'a'); // create an "empty" sub
     nsub = nsub.get(subName).then((nsub) => { // Populate it
         if (typeof nsub.name === "undefined") {
-            res.redirect('/404');
+            return new Error("Sub not found");
         } else {
-            res.render('r/', {
-                title: "/r/" + nsub.name + " -- Shreddit",
-                lI: req.isAuthenticated(),
-                message: req.flash('error'),
-                user: req.user || null, // The logged in user
-                sub: nsub // The subreddit 
+            var posts = new post();
+            posts.getAllFromSub(nsub.id).then((allPosts) => {
+                console.log(nsub.id);
+                console.log("All Posts: ",allPosts);
+                res.render('r/', {
+                    title: "/r/" + nsub.name + " -- Shreddit",
+                    lI: req.isAuthenticated(),
+                    message: req.flash('error'),
+                    user: req.user || null, // The logged in user
+                    sub: nsub, // The subreddit 
+                    posts: allPosts
+                });
             });
         }
     });
@@ -148,4 +205,13 @@ function isAuthed(req, res, next) {
     res.redirect('/login');
 }
 
+function getMatches(string, regex, index) {
+    index || (index = 1); // default to the first capturing group
+    var matches = [];
+    var match;
+    while (match = regex.exec(string)) {
+        matches.push(match[index]);
+    }
+    return matches;
+}
 module.exports = router;

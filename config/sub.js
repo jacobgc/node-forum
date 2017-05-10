@@ -1,13 +1,9 @@
 var r = require("../db");
 var validator = require('validator');
-
-var blacklistedSubs = [
-    "delete",
-    "create",
-];
+var uuid = require('uuid');
 
 class sub {
-    constructor(name, description,ldescription, owner) {
+    constructor(name, description, ldescription, owner) {
         this.name = name,
             this.description = description,
             this.ldescription = ldescription,
@@ -15,7 +11,7 @@ class sub {
     }
 
     errorCheck(name) {
-        return new Promise(function(resolve, reject) {
+        return new Promise(function (resolve, reject) {
             if (validator.contains(name, " ") || validator.isAlpha(name, ['en-GB'])) {
                 console.log(false);
                 resolve(false);
@@ -29,7 +25,9 @@ class sub {
     update(a, b) {
         var update = {};
         update[a] = b;
-        return r.table('subs').getAll(this.id, { index: 'id' }).update(update).run().then(() => {
+        return r.table('subs').getAll(this.id, {
+            index: 'id'
+        }).update(update).run().then(() => {
             return;
         });
     }
@@ -43,13 +41,16 @@ class sub {
 
     get(name) {
         name = name.toLowerCase();
-        return r.table("subs").getAll(name, { index: 'name' }).run()
+        return r.table("subs").getAll(name, {
+                index: 'name'
+            }).run()
             .then((result) => {
                 if (typeof result[0] == "undefined") {
                     return false;
                 } else {
                     var a = result[0];
                     var nsub = new sub(a.name, a.desciption, a.ldescription, a.owner);
+                    nsub.id = a.id;
                     return nsub;
                 }
             });
@@ -58,7 +59,9 @@ class sub {
     create() {
         this.name = this.name.toLowerCase();
         var subExists = false;
-        return r.table('subs').getAll(this.name, { index: 'name' }).run()
+        return r.table('subs').getAll(this.name, {
+                index: 'name'
+            }).run()
             .then((result) => {
                 if (typeof result[0] !== "undefined") {
                     subExists = true;
@@ -69,7 +72,8 @@ class sub {
                             name: this.name,
                             owner: this.owner,
                             description: this.description,
-                            ldescription: this.ldescription
+                            ldescription: this.ldescription,
+                            id: uuid.v4()
                         }).run()
                         .then(() => {
                             return true;

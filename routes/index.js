@@ -1,18 +1,6 @@
 var express = require('express');
 var router = express.Router();
-var request = require('request');
-var sharp = require('sharp');
-var r = require('rethinkdb');
 
-var AWS = require('aws-sdk'); // Amazon <3
-// Create an S3 client
-var s3 = new AWS.S3({ signatureVersion: 'v4' });
-
-var connection = null;
-r.connect({ host: 'localhost', port: 28015 }, function(err, conn) {
-    if (err) throw err;
-    connection = conn;
-});
 
 // /* GET home page. */
 router.get('/', function(req, res, next) {

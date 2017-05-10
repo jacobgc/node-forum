@@ -10,11 +10,11 @@
     <%- include ../templates/nav.ejs %>
         <nav class="container cyan darken-4">
             <div class="nav-wrapper cyan darken-4">
-                    <div style="padding-left: 10px;padding-right: 10px">
-                        <a href="/" class="breadcrumb">Shreddit</a>
+                <div style="padding-left: 10px;padding-right: 10px">
+                    <a href="/" class="breadcrumb">Shreddit</a>
                     <a href="/r/<%=sub.name%>" class="breadcrumb">/r/<%=sub.name%></a>
-                    </div>
                 </div>
+            </div>
             </div>
         </nav>
         <div class="row ">
@@ -23,27 +23,34 @@
                     <ul class="collection with-header">
                         <li class="collection-header">
                             <h4>
-                                Welcome to /r/<%=sub.name%>
+                                Welcome to /r/
+                                <%=sub.name%>
                             </h4>
                             <a href="./<%=sub.name%>/p/create" class="waves-effect waves-light btn">Create Post</a>
                         </li>
+                        <% posts.forEach(function(post) { %>
                         <li class="collection-item avatar">
-                            <img src="https://placehold.it/100x100" alt="" class="circle">
-                            <span class="title">Hitler dies :(</span>
-                            <p>Post body .....awd.awd.wad.aw.da.d.awd.w</p>
+                            <img src="<%=post.thumbnail%>" alt="" class="circle">
+                            <span class="title"><a href='./p/<%=post.uri%>'><%=post.title%></a></span>
+                            <p><%=post.body%></p>
                         </li>
+                        <% })%>
                 </div>
             </div>
             <div class="col s12 m3">
-                <div id="ldesc">
+                <h5>Sub Rules / Desription</h5>
+                <div id="markup">
+                    
                 </div>
+                <%=posts%>
             </div>
         </div>
         <%- include ../templates/footer.ejs %>
 </body>
 <script src="https://cdnjs.cloudflare.com/ajax/libs/marked/0.3.6/marked.min.js"></script>
 <script>
-    document.getElementById('ldesc').innerHTML =
-      marked('<%=sub.ldescription%>');
+    document.getElementById('markup').innerHTML =
+        marked('<%=sub.ldescription%>');
 </script>
+
 </html>
