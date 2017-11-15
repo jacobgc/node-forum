@@ -21,7 +21,7 @@
     "express-session-rethinkdb": "^0.4.1",
     "marked": "^0.3.6",
     "md5": "^2.2.1",
-    "morgan": "~1.8.2",
+    "morgan": "~1.9.0",
     "node-uuid": "^1.4.7",
     "passport": "^0.3.2",
     "passport-local": "^1.0.0",
@@ -33,7 +33,7 @@
     "uuid": "^3.0.1",
     "validator": "^7.0.0",
     "xtend": "^4.0.1",
-    "snyk": "^1.41.1"
+    "snyk": "^1.49.2"
   },
   "snyk": true
 }
